@@ -36,9 +36,16 @@ if (createSecureContext) {
 
 function addDefaultCA(file) {
   try {
+    var cert;
     var content = fs.readFileSync(file, {encoding: 'ascii'}).trim();
     if (content.indexOf('-----BEGIN CERTIFICATE-----') === 0) {
-      defaultCAs.push(content);
+      var certs = content.split('-----END CERTIFICATE-----');
+      for (var i = 0; i < certs.length; ++i) {
+        cert = certs[i].trim();
+        if (cert.length > 0) {
+          defaultCAs.push(certs[i].trim() + '\n-----END CERTIFICATE-----\n');
+        }
+      }
     }
   } catch (e) {
     if (e.code !== 'ENOENT') {
