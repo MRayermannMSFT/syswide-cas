@@ -2,37 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const tls = require('tls');
 
-const defaultCAs = [];
-
-function applyWithRootCAs(func, options, args) {
-  var i;
-  var ca = options.ca;
-  if (options.ca) {
-    delete options.ca;
-  }
-  var obj = func.apply(null, args);
-  var cas = defaultCAs;
-  if (ca) {
-    cas = defaultCAs.concat(ca);
-  }
-  for (i = 0; i < cas.length; ++i) {
-    obj.context.addCACert(cas[i]);
-  }
-  return obj;
-}
-
-const createSecureContext = tls.createSecureContext;
-if (createSecureContext) {
-  tls.createSecureContext = function(options) {
-    return applyWithRootCAs(createSecureContext, options, arguments);
-  };
-} else {
-  const crypto = require('crypto');
-  const createCredentials = crypto.createCredentials;
-  crypto.createCredentials = function(options) {
-    return applyWithRootCAs(createCredentials, options, arguments);
-  };
-}
+// create an empty secure context loaded with the root CAs
+const rootSecureContext = tls.createSecureContext ? tls.createSecureContext() : require('crypto').createCredentials();
 
 function addDefaultCA(file) {
   try {
@@ -43,7 +14,9 @@ function addDefaultCA(file) {
       for (var i = 0; i < certs.length; ++i) {
         cert = certs[i].trim();
         if (cert.length > 0) {
-          defaultCAs.push(certs[i].trim() + '\n-----END CERTIFICATE-----\n');
+          // this will add the cert to the root certificate authorities list
+          // which will be used by all subsequent secure contexts with root CAs
+          rootSecureContext.context.addCACert(cert + '\n-----END CERTIFICATE-----\n');
         }
       }
     }
