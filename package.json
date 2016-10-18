@@ -1,7 +1,7 @@
 {
   "name": "syswide-cas",
-  "version": "1.0.0",
-  "description": "Enable node to use system wide certificate authorities in conjunction with bundled root CAs",
+  "version": "2.0.0",
+  "description": "Enable node to use system wide certificate authorities in conjunction with the bundled root CAs",
   "keywords": [
     "tls",
     "ca",
