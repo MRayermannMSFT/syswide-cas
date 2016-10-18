@@ -89,10 +89,7 @@ exports.addCAs = function(dirs) {
 };
 
 const defaultCALocations = [
-  "/etc/ssl/certs",           // Debian/Ubuntu/Gentoo etc.
-  "/etc/pki/tls/certs",       // Fedora/RHEL
-  "/etc/ssl/ca-bundle.pem",   // OpenSUSE
-  "/etc/pki/tls/cacert.pem"   // OpenELEC
+  "/etc/ssl/ca-node.pem"
 ];
 
 exports.addCAs(defaultCALocations);
